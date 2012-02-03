@@ -19,20 +19,19 @@ class Decision
   end
   
   def controller
-    find_controller(@controller)
+    self.class.find_controller(@controller)
   end
-  
-  def find_controller(controller_name)
-    self.class.find_controller("#{controller_name}")
-  end
-  
   
   def action
     @action
   end
   
-  def run
-    {}
+  def run (*args)
+    if args.length < 1
+      controller.send(@action)  
+    else
+      controller.send(@action,*args)
+    end
   end
   
   

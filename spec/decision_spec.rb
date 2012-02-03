@@ -1,9 +1,9 @@
 # 1. I want to instantiate the Controller
 #   - Where Controller is a named controller specified by Query
-# 2. I want to instantiate Controllers w/ an access type, as specified by the Query object
-# 3. I want to call a method of the controller, where the method is the named action specified by the Query object
+# 2. I want to call a method of the controller, where the method is the named action specified by the Query object
 #   - should return a Hash
-# 4. I want pass the hash returned by the named action to a Presenter object
+# 3. I want pass the hash returned by the named action to a Presenter object
+# 4. I want to dyanically call a presenter object
 
 require "spec_helper"
 require 'decision'
@@ -21,7 +21,8 @@ describe Decision do
   
   it "instantiates a controller, given a query" do
     query = Query.new "/json/user/create"
-    UserController.should_receive(:new)
+    #UserController.should_receive(:new)  #this line is bad!! it changes :new so that the (nonexistent) return value is (by extrapolation) nil
+    Decision.find_controller('user').should be_a(UserController)
     decision = Decision.new(query.controller, query.action)
     decision.controller.should be_a(UserController)
     decision.action.should == :create

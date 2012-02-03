@@ -28,11 +28,12 @@ describe Decision do
     decision.action.should == :create
   end
   
-  # it "runs the action and recieves a hash" do
-  #   query = Query.new "/json/user/create"
-  #   decision = Decision.new(query.controller, query.action)
-  #   decision.run.should be_a(Hash)
-  # end
+  it "runs the action and recieves a hash" do
+    query = Query.new "/json/user/create"
+    decision = Decision.new(query.controller, query.action)
+    decision.run.should be_a(Hash)
+  end
+  
   # 
   # it "runs the action with parameters" do
   #   query = Query.new "/json/user/create"

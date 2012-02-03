@@ -5,4 +5,8 @@ class UserController
   def create 
   	{}
   end
+  def read(username)
+
+  	{:username => username}
+  end
 end

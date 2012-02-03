@@ -7,38 +7,49 @@
 
 require "spec_helper"
 require 'decision'
+require 'controller_decision'
+require 'presenter_decision'
 require 'user_controller'
 require 'asset_controller'
+require 'json_presenter'
+require 'presenter'
+require 'controller'
 
 describe Decision do
   
-  
   it "returns a named controller" do
-    puts Decision.find_controller('user')
-    Decision.find_controller('user').should be_a(UserController)
-    Decision.find_controller('asset').should be_a(AssetController)
+    puts ControllerDecision.find('user')
+    ControllerDecision.find('user').should be_a(UserController)
+    ControllerDecision.find('asset').should be_a(AssetController)
   end
   
   it "instantiates a controller, given a query" do
     query = Query.new "/json/user/create"
     #UserController.should_receive(:new)  #this line is bad!! it changes :new so that the (nonexistent) return value is (by extrapolation) nil
-    Decision.find_controller('user').should be_a(UserController)
-    decision = Decision.new(query.controller, query.action)
+    ControllerDecision.find('user').should be_a(UserController)
+    decision = ControllerDecision.new(query.controller, query.action)
     decision.controller.should be_a(UserController)
     decision.action.should == :create
   end
   
   it "runs the action and recieves a hash" do
     query = Query.new "/json/user/create"
-    decision = Decision.new(query.controller, query.action)
+    decision = ControllerDecision.new(query.controller, query.action)
     decision.run.should be_a(Hash)
   end
-  
-  # 
-  # it "runs the action with parameters" do
-  #   query = Query.new "/json/user/create"
-  #   decision = Decision.new(query.controller, query.action)
-  #   decision.run.should be_a(Hash)
-  # end
+
+  it "runs the action with parameters" do
+    query = Query.new "/json/user/read"
+    decision = ControllerDecision.new(query.controller, query.action)
+    decision.run("bob").should be_a(Hash)
+  end
+
+  it "instantiates a presenter" do
+    query = Query.new "/json/user/read"
+    controller = ControllerDecision.new(query.controller, query.action)
+    presenter = PresenterDecision.new(query.format,:present)
+    presenter.presenter.should be_a(Presenter)
+    presenter.run controller.run("bob")
+  end
   
 end

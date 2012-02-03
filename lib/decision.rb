@@ -1,25 +1,29 @@
 class Decision
   
   
-  def self.find_controller(controller_name)
+  def self.find(object_name)
+    context = @object_context
+    puts "Context: #{context}"
     # require "#{controller_name}_controller"
-    controller_whole_name = controller_name.split('_').map {|w| w.capitalize}.join
-    controller_const_name = "#{controller_whole_name}Controller"
-    raise NameError.new "Constant not found: " unless Kernel.const_defined?(controller_const_name)
-    controller = Kernel.const_get(controller_const_name).new
-    puts "Controller Name: #{controller_const_name}"
-    puts "Instance: #{controller.inspect}"
-    controller
+    object_whole_name = ("#{object_name}_#{context}").split('_').map {|w| w.capitalize}.join
+    object_const_name = "#{object_whole_name}"
+    puts "#{context} Name: #{object_const_name}"
+    raise NameError.new "Constant not found: " unless Kernel.const_defined?(object_const_name)
+    object_instance = Kernel.const_get(object_const_name).new
+    puts "#{context} Instance: #{object_instance.inspect}"
+    object_instance
   end
   
   
-  def initialize(controller_name, action)
-    @controller = controller_name
+  def initialize(object_name, action)
+    #puts "object: #{object_name}, action: #{action}"
+    @object_name = object_name
     @action = action.to_sym
+    @object_context ="Object"
   end
   
-  def controller
-    self.class.find_controller(@controller)
+  def object_instance
+    self.class.find(@object_name)
   end
   
   def action
@@ -28,10 +32,10 @@ class Decision
   
   def run (*args)
     if args.length < 1
-      controller.send(@action)  
+      object_instance.send(@action)  
     else
-      controller.send(@action,*args)
-    end
+      object_instance.send(@action,*args)
+    end if @action != :none
   end
   
   
